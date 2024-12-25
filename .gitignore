@@ -1,8 +1,8 @@
-/SingleLinkedList/cmake-build-debug/
-/Vector/.idea/
-/Vector/cmake-build-debug/
-/Vector/CMakeLists.txt
-/SingleLinkedList/CMakeLists.txt
-/SingleLinkedList/.idea/
+/*/cmake-build-debug/
+/*/.idea/
+/*/cmake-build-debug/
+/*/CMakeLists.txt
+/*/CMakeLists.txt
+/*/.idea/
 .DS_Store
 .idea/
