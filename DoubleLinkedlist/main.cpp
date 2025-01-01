@@ -58,6 +58,13 @@ public:
 		cout << "\n";
 	}
 
+	void print_reversed()
+	{
+		for (Node* cur = tail; cur; cur = cur->prev)
+			cout << cur->data << " ";
+		cout << "\n";
+	}
+
 	// These 2 simple functions just to not forget changing the vector and length
 	void delete_node(Node* node)
 	{
@@ -78,29 +85,79 @@ public:
 		if (!head)
 			head = tail = item;
 		else
-			tail->next = item, tail = item;
+		{
+			link(tail, item);
+			tail = item;
+		}
+	}
+
+	void link(Node* first, Node* second)
+	{
+		if (first)
+		{
+			first->next = second;
+		}
+		if (second)
+		{
+			second->prev = first;
+		}
 	}
 
 	void insert_front(int value)
 	{
 		Node* item = new Node(value);
+		add_node(item);
 
 		if (!head) head = tail = item;
 		else
 		{
-			item->next = head;
+			link(item, head);
 			head = item;
 		}
-		++length;
 	}
 
 	void delete_front()
 	{
-		assert(length);
+		if (!head)
+		{
+			return;
+		}
 		Node* cur = head->next;
 		delete_node(head);
 		head = cur;
-		if (!head) tail = nullptr;
+		if (head)
+		{
+			head->prev = nullptr;
+		} else if (!length)
+		{
+			head = nullptr;
+		}
+	}
+
+	void delete_end()
+	{
+		if (!head)
+		{
+			return;
+		}
+		Node* cur = tail->prev;
+		delete_node(tail);
+		tail = cur;
+		if (tail)
+		{
+			head->next = nullptr;
+		} else if (!length)
+		{
+			head = nullptr;
+		}
+	}
+
+	Node* delete_and_link(Node* cur)
+	{
+		Node* ret = cur->prev;
+		link(cur->prev, cur->next);
+		delete_node(cur);
+		return ret;
 	}
 
 	void delete_last()
@@ -181,12 +238,16 @@ public:
 		}
 		else
 		{
-			for (Node *cur = head, *prv = nullptr; cur; prv = cur, cur = cur->next)
+			for (Node *cur = head; cur; cur = cur->next)
 			{
 				if (cur->data == k)
 				{
-					delete_next_node(prv);
-					return;
+					cur = delete_and_link(cur);
+					if (! cur->next)
+					{
+						tail = cur;
+					}
+					break;
 				}
 			}
 			cout << "Value not found" << endl;
@@ -250,21 +311,24 @@ public:
 		}
 		else
 		{
-			for (Node *cur = head, *prv = nullptr; cur; prv = cur, cur = cur->next)
+			for (Node *cur = head; cur; cur = cur->next)
 			{
 				if (cur->data >= value)
 				{
+					embed_after(cur->prev, value);
+					break;
 				}
 			}
 		}
 	}
 
-	void embed_after(Node* node, int value)
+	void embed_after(Node* node_before, int value)
 	{
-		Node* item = new Node(value);
+		Node* middle = new Node(value);
 		++length;
-		item->next = node;
-		node->next = item;
+		Node* after = node_before->next;
+		link(node_before, middle);
+		link(middle, after);
 	}
 
 	int max(Node* cur = nullptr, bool is_first_call = true)
@@ -531,6 +595,12 @@ public:
 
 int main()
 {
+	DoublyLinkedList list;
+	list.insert_sorted(10);
+	list.insert_sorted(20);
+	list.insert_sorted(30);
+	list.insert_sorted(1);
+	list.print();
 	return 0;
 }
 
