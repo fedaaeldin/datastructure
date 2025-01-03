@@ -622,6 +622,70 @@ public:
 			}
 		}
 	}
+
+	void delete_even_positions()
+	{
+		Node* cur = head;
+		while (cur && cur->next)
+		{
+			Node* to_delete = cur->next;
+			link(cur, cur->next->next);
+			if (to_delete == tail)
+			{
+				tail = cur;
+			}
+			cur = cur->next;
+			delete to_delete;
+		}
+	}
+
+	void delete_odd_positions()
+	{
+		delete_front();
+		delete_even_positions();
+	}
+
+	bool is_plaindrome()
+	{
+		Node* front = head;
+		Node* back = tail;
+		while (front != back && front->next != back)
+		{
+			if (front->data == back->data)
+			{
+				front = front->next;
+				back = back->prev;
+			} else
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	int middle()
+	{
+		Node* front = head;
+		Node* back = tail;
+		while (front != back && front->next != back)
+		{
+			front = front->next;
+			back = back->prev;
+		}
+		return back->data;
+	}
+
+	int middle2()
+	{
+		Node* slow = head;
+		Node* fast = head;
+		while (fast && fast->next)
+		{
+			slow = slow->next;
+			fast = fast->next->next;
+		}
+		return slow->data;
+	}
 };
 
 
@@ -630,15 +694,12 @@ int main()
 {
 	DoublyLinkedList list;
 	list.insert_end(1);
-	list.insert_end(1);
-	list.insert_end(1);
-	list.insert_end(1);
 	list.insert_end(2);
-	list.insert_end(1);
-	list.insert_end(1);
-	list.insert_end(1);
-	list.delete_all_with_key(1);
-	list.print();
+	list.insert_end(3);
+	list.insert_end(5);
+	list.insert_end(6);
+	list.insert_end(7);
+	cout << list.middle2() << endl;
 	return 0;
 }
 
