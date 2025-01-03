@@ -600,6 +600,83 @@ public:
 		}
 	}
 
+	void add_number(LinkedList& another)
+	{
+		Node* my_cur = head;
+		Node* his_cur = another.head;
+		int carry = 0, my_value, his_value;
+		while (my_cur || his_cur)
+		{
+			my_value = 0, his_value = 0;
+			if (my_cur)
+			{
+				my_value = my_cur->data;
+			}
+			if (his_cur)
+			{
+				his_value = his_cur->data;
+				his_cur = his_cur->next;
+			}
+			my_value += his_value + carry;
+			carry = my_value / 10;
+			my_value = my_value % 10;
+			if (my_cur)
+			{
+				my_cur->data = my_value;
+				my_cur = my_cur->next;
+			}
+			else
+			{
+				insert_end(my_value);
+			}
+		}
+		if (carry)
+		{
+			insert_end(carry);
+		}
+	}
+
+	pair<Node*, pair<Node*, Node*>> reverse_subchain(Node* cur_head, int k)
+	{
+		Node* cur_tail = cur_head;
+		Node* prv = cur_head;
+		cur_head = cur_head->next;
+		for (int s = 0; s < k-1 && cur_head; s++ )
+		{
+			Node* next = cur_head->next;
+			cur_head->next = prv;
+
+			prv = cur_head;
+			cur_head = next;
+		}
+		return make_pair(prv, make_pair(cur_tail, cur_head));
+	}
+
+	void reverse_chain(int k)
+	{
+		Node* last_tail = nullptr;
+		Node* next_chain_head = head;
+		head = nullptr;
+
+		while (next_chain_head)
+		{
+			auto p = reverse_subchain(next_chain_head, k);
+			Node* chain_head = p.first;
+			Node* chain_tail = p.second.first;
+			next_chain_head = p.second.second;
+			tail = chain_tail;
+			if (!head)
+			{
+				head = chain_head;
+			} else
+			{
+				last_tail->next = chain_head;
+			}
+			last_tail = chain_tail;
+		}
+		tail->next = nullptr;
+	}
+
 	////////////////////////////////////////////////////////////
 };
 
@@ -658,19 +735,12 @@ int main()
 	// cout << "\n\nNO RTE\n";
 
 	LinkedList list;
-
+	list.insert_end(1);
 	list.insert_end(2);
-	list.insert_end(2);
+	list.insert_end(3);
 	list.insert_end(4);
-	list.insert_end(3);
-	list.insert_end(3);
-	list.insert_end(1);
-	list.insert_end(1);
 	list.insert_end(5);
-	list.insert_end(6);
-	list.insert_end(6);
-
-	list.remove_all_repeated();
+	list.reverse_chain(3);
 
 	list.print();
 
