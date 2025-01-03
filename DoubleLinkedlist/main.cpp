@@ -589,6 +589,39 @@ public:
 			head = prv;
 		}
 	}
+
+	void delete_all_with_key(int key)
+	{
+		Node* cur = head;
+		while (cur)
+		{
+			if (cur->data == key)
+			{
+				if (cur == head)
+				{
+					delete_front();
+					cur = head;
+				} else if (cur == tail)
+				{
+					Node* to_delete = cur;
+					cur->prev->next = nullptr;
+					delete to_delete;
+					cur = nullptr;
+				}
+				else
+				{
+					Node* to_delete = cur;
+					cur->prev->next = cur->next;
+					cur->next->prev = cur->prev;
+					cur = to_delete->next;
+					delete to_delete;
+				}
+			} else
+			{
+				cur = cur->next;
+			}
+		}
+	}
 };
 
 
@@ -596,10 +629,15 @@ public:
 int main()
 {
 	DoublyLinkedList list;
-	list.insert_sorted(10);
-	list.insert_sorted(20);
-	list.insert_sorted(30);
-	list.insert_sorted(1);
+	list.insert_end(1);
+	list.insert_end(1);
+	list.insert_end(1);
+	list.insert_end(1);
+	list.insert_end(2);
+	list.insert_end(1);
+	list.insert_end(1);
+	list.insert_end(1);
+	list.delete_all_with_key(1);
 	list.print();
 	return 0;
 }
