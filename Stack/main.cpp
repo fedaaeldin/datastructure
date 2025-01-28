@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cassert>
-#include <stack>
+#include <vector>
 using namespace std;
 
 class Stack
@@ -55,6 +55,39 @@ public:
         for (int i = top; i >= 0; i--)
             cout << array[i] << " ";
         cout << "\n";
+    }
+
+    void reverse_display()
+    {
+        for (int i = 0; i <= top; i++)
+            cout << array[i] << " ";
+        cout << "\n";
+    }
+
+    void insert_bottom(int value)
+    {
+        if (isEmpty())
+        {
+            push(value);
+        } else
+        {
+            int cur = pop();
+            insert_bottom(value);
+            push(cur);
+        }
+    }
+
+    void reverse()
+    {
+        if (isEmpty())
+        {
+            return;
+        }
+        int cur = pop();
+
+        reverse();
+
+        insert_bottom(cur);
     }
 };
 
@@ -146,11 +179,57 @@ string remove_adjacent(string input)
     return output;
 }
 
+bool haveDifferentSigns(int a, int b) {
+    return (a ^ b) < 0; // XOR the two numbers and check if the result is negative
+}
+
+void asteroid_collision(vector<int> nums)
+{
+    int size = nums.size();
+    if (size <= 1)
+    {
+        return;
+    }
+
+    Stack stk(size);
+    int i = 0;
+    while (i < size)
+    {
+        if (! stk.isEmpty() && haveDifferentSigns(stk.peek(), nums[i]))
+        {
+            if (abs(stk.peek()) > abs(nums[i]))
+            {
+                ++i;
+            } else if (abs(stk.peek()) < nums[i])
+            {
+                stk.pop();
+            } else
+            {
+                ++i;
+                stk.pop();
+            }
+        } else
+        {
+            stk.push(nums[i++]);
+        }
+    }
+
+    stk.reverse_display();
+}
+
+
+
 
 
 int main()
 {
-    cout << remove_adjacent("abbaca") << endl;
+    Stack stk(10);
+    stk.push(1);
+    stk.push(2);
+    stk.push(3);
+    // stk.reverse();
+
+    stk.display();
 
     return 0;
 }
