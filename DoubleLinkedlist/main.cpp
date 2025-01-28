@@ -58,13 +58,6 @@ public:
 		cout << "\n";
 	}
 
-	void print_reversed()
-	{
-		for (Node* cur = tail; cur; cur = cur->prev)
-			cout << cur->data << " ";
-		cout << "\n";
-	}
-
 	// These 2 simple functions just to not forget changing the vector and length
 	void delete_node(Node* node)
 	{
@@ -265,24 +258,6 @@ public:
 				cur = cur->next;
 			}
 		}
-	}
-
-	void reverse()
-	{
-		if (length <= 1) return;
-		Node* prv = head;
-		tail = head;
-		head = head->next;
-		while (head)
-		{
-			Node* next = head->next;
-			head->next = prv;
-
-			prv = head;
-			head = next;
-		}
-		head = prv;
-		tail->next = nullptr;
 	}
 
 	void delete_even()
@@ -686,6 +661,117 @@ public:
 		}
 		return slow->data;
 	}
+
+	void swap_kth(int k)
+	{
+		if (k > length)
+		{
+			return;
+		}
+
+		int kth_back = length - k + 1;
+		if (k == kth_back)
+		{
+			return;
+		}
+
+		if (k > kth_back)
+		{
+			swap(k, kth_back);
+		}
+
+		Node* first = get_nth(k);
+		Node* last = get_nth(kth_back);
+
+		Node* first_prv = first->prev;
+		Node* first_next = first->next;
+
+		Node* last_prv = last->prev;
+		Node* last_next = last->next;
+
+		if (k + 1 == kth_back)
+		{
+			link(first_prv, last);
+			link(last, first);
+			link(first, last_next);
+
+		} else
+		{
+			link(first_prv, last);
+			link(last, first_next);
+			link(last_prv, first);
+			link(first, last_next);
+		}
+
+		if (k == 1)
+		{
+			swap(head, tail);
+		}
+
+	}
+	void reverse()
+	{
+		if (length <= 1)
+		{
+			return;
+		}
+		Node* first = head, *second = head->next;
+		while (second)
+		{
+			Node* first_ = second, *second_ = second->next;
+			link(second, first);
+			first = first_, second = second_;
+		}
+		swap(head, tail);
+		head->prev = tail->next = nullptr;
+	}
+
+	void merge_two_sorted_lists(DoublyLinkedList& other)
+	{
+		if (!other.head)
+		{
+			return;
+		}
+		if (head)
+		{
+			Node* cur1 = head;
+			Node* cur2 = other.head;
+			Node* last = { };
+			head = nullptr;
+			while (cur1 && cur2)
+			{
+				Node* next { };
+				if (cur1->data <= cur2->data)
+				{
+					next = cur1;
+					cur1 = cur1->next;
+				} else
+				{
+					next = cur2;
+					cur2 = cur2->next;
+				}
+				link(last, next);
+				last = next;
+				if (!head) // first step
+				{
+					head = last;
+				}
+			}
+			if (cur2)
+			{
+				tail = other.tail;
+				link(last, cur2);
+			} else if (cur1)
+			{
+				link(last, cur1);
+			}
+		} else
+		{
+			head = other.head;
+			tail = other.tail;
+		}
+		length += other.length;
+	}
 };
 
 
@@ -694,12 +780,21 @@ int main()
 {
 	DoublyLinkedList list;
 	list.insert_end(1);
-	list.insert_end(2);
 	list.insert_end(3);
 	list.insert_end(5);
-	list.insert_end(6);
 	list.insert_end(7);
-	cout << list.middle2() << endl;
+	list.insert_end(9);
+
+	DoublyLinkedList list2;
+	list2.insert_end(2);
+	list2.insert_end(4);
+	list2.insert_end(6);
+	list2.insert_end(8);
+	list2.insert_end(10);
+
+
+	list.merge_two_sorted_lists(list2);
+	list.print();
 	return 0;
 }
 
