@@ -217,19 +217,70 @@ void asteroid_collision(vector<int> nums)
     stk.reverse_display();
 }
 
+int evalaute_parentheses(string s)
+{
+    int size = s.size();
+    Stack stk(size);
+
+    for (int i = 0; i < size; ++i)
+    {
+        if (s[i] == '(')
+        {
+            stk.push(0);
+        } else
+        {
+            int last = stk.pop();
+            if (last == 0)
+            {
+                last = 1;
+            } else
+            {
+                last *= 2;
+            }
+
+            if (! stk.isEmpty())
+            {
+                int parent = stk.pop() + last;
+                stk.push(parent);
+            } else
+            {
+                stk.push(last);
+            }
+
+        }
+    }
+    return stk.pop();
+}
+
+void next_greater_number(int v[], int len)
+{
+    Stack pos(len);
+    for (int i = 0; i < len; ++i)
+    {
+        while (!pos.isEmpty() && v[i] > v[pos.peek()])
+            v[pos.pop()] = v[i];
+        pos.push(i);
+    }
+
+    while (! pos.isEmpty())
+    {
+        v[pos.pop()] = -1;
+    }
+
+    for (int i = 0; i < len; ++i)
+    {
+        cout << v[i] << " ";
+    }
+    cout << endl;
+}
+
 
 
 
 
 int main()
 {
-    Stack stk(10);
-    stk.push(1);
-    stk.push(2);
-    stk.push(3);
-    // stk.reverse();
-
-    stk.display();
+    cout << evalaute_parentheses("()()()") << endl;
 
     return 0;
 }
