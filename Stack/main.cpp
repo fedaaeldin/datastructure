@@ -69,7 +69,8 @@ public:
         if (isEmpty())
         {
             push(value);
-        } else
+        }
+        else
         {
             int cur = pop();
             insert_bottom(value);
@@ -127,7 +128,7 @@ int reverse_number(int num)
         stk.push(num % 10), num /= 10;
     }
     int tens = 1;
-    while (! stk.isEmpty())
+    while (!stk.isEmpty())
     {
         cout << num << endl;
         num = stk.pop() * tens + num, tens *= 10;
@@ -150,7 +151,8 @@ bool valid_parentheses(string input)
         if (ch == '(' || ch == '{' || ch == '[')
         {
             stk.push(ch);
-        } else if (stk.isEmpty() || stk.pop() != match_parentheses(ch))
+        }
+        else if (stk.isEmpty() || stk.pop() != match_parentheses(ch))
         {
             return false;
         }
@@ -161,25 +163,27 @@ bool valid_parentheses(string input)
 string remove_adjacent(string input)
 {
     Stack stk(input.size());
-    for (char ch: input)
+    for (char ch : input)
     {
-        if (! stk.isEmpty() && stk.peek() == ch)
+        if (!stk.isEmpty() && stk.peek() == ch)
         {
             stk.pop();
-        } else
+        }
+        else
         {
             stk.push(ch);
         }
     }
     string output = "";
-    while (! stk.isEmpty())
+    while (!stk.isEmpty())
     {
-        output = ( (char) stk.pop()) + output;
+        output = ((char)stk.pop()) + output;
     }
     return output;
 }
 
-bool haveDifferentSigns(int a, int b) {
+bool haveDifferentSigns(int a, int b)
+{
     return (a ^ b) < 0; // XOR the two numbers and check if the result is negative
 }
 
@@ -195,20 +199,23 @@ void asteroid_collision(vector<int> nums)
     int i = 0;
     while (i < size)
     {
-        if (! stk.isEmpty() && haveDifferentSigns(stk.peek(), nums[i]))
+        if (!stk.isEmpty() && haveDifferentSigns(stk.peek(), nums[i]))
         {
             if (abs(stk.peek()) > abs(nums[i]))
             {
                 ++i;
-            } else if (abs(stk.peek()) < nums[i])
+            }
+            else if (abs(stk.peek()) < nums[i])
             {
                 stk.pop();
-            } else
+            }
+            else
             {
                 ++i;
                 stk.pop();
             }
-        } else
+        }
+        else
         {
             stk.push(nums[i++]);
         }
@@ -227,26 +234,28 @@ int evalaute_parentheses(string s)
         if (s[i] == '(')
         {
             stk.push(0);
-        } else
+        }
+        else
         {
             int last = stk.pop();
             if (last == 0)
             {
                 last = 1;
-            } else
+            }
+            else
             {
                 last *= 2;
             }
 
-            if (! stk.isEmpty())
+            if (!stk.isEmpty())
             {
                 int parent = stk.pop() + last;
                 stk.push(parent);
-            } else
+            }
+            else
             {
                 stk.push(last);
             }
-
         }
     }
     return stk.pop();
@@ -262,7 +271,7 @@ void next_greater_number(int v[], int len)
         pos.push(i);
     }
 
-    while (! pos.isEmpty())
+    while (!pos.isEmpty())
     {
         v[pos.pop()] = -1;
     }
@@ -275,12 +284,89 @@ void next_greater_number(int v[], int len)
 }
 
 
+int precedence(char op)
+{
+    if (op == '+' || op == '-')
+    {
+        return 1;
+    }
+    if (op == '*' || op == '/')
+    {
+        return 2;
+    }
+    return 0;
+}
 
+string infix_to_postfix(string infix)
+{
+    int size = infix.size();
+    Stack operators(size);
+    string postfix;
+
+    for (int i = 0; i < size; ++i)
+    {
+        if (isdigit(infix[i]))
+        {
+            postfix += infix[i];
+        } else if (! operators.isEmpty() && operators.peek() == '(')
+        {
+            operators.push(infix[i]);
+        }
+        else if (! operators.isEmpty() && operators.peek() == ')')
+        {
+            while (! operators.isEmpty() && operators.peek() != '(')
+            {
+                postfix += operators.pop();
+            }
+            operators.pop();
+        }
+        {
+            while (! operators.isEmpty() && precedence(operators.peek()) >= precedence(infix[i] ))
+            {
+                postfix += operators.pop();
+            }
+            operators.push(infix[i]);
+        }
+    }
+
+    while (! operators.isEmpty())
+    {
+        postfix += operators.pop();
+    }
+
+    return postfix;
+}
+
+string infix_to_postfix_v2(string infix)
+{
+    infix += '-';
+    int size = infix.size();
+    Stack operators(size);
+    operators.push('#');
+    string postfix;
+
+    for (int i = 0; i < size; ++i)
+    {
+        if (isdigit(infix[i]))
+        {
+            postfix += infix[i];
+        } else
+        {
+            while (precedence(operators.peek()) >= precedence(infix[i] ))
+            {
+                postfix += operators.pop();
+            }
+            operators.push(infix[i]);
+        }
+    }
+
+    return postfix;
+}
 
 
 int main()
 {
-    cout << evalaute_parentheses("()()()") << endl;
+    cout << infix_to_postfix_v2("2+3*2") << endl;
 
     return 0;
 }
