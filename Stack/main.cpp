@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <cmath>
 #include <vector>
 using namespace std;
 
@@ -294,6 +295,10 @@ int precedence(char op)
     {
         return 2;
     }
+    if (op == '^')
+    {
+        return 3;
+    }
     return 0;
 }
 
@@ -308,20 +313,22 @@ string infix_to_postfix(string infix)
         if (isdigit(infix[i]))
         {
             postfix += infix[i];
-        } else if (! operators.isEmpty() && operators.peek() == '(')
+        }
+        else if (!operators.isEmpty() && operators.peek() == '(')
         {
             operators.push(infix[i]);
         }
-        else if (! operators.isEmpty() && operators.peek() == ')')
+        else if (!operators.isEmpty() && operators.peek() == ')')
         {
-            while (! operators.isEmpty() && operators.peek() != '(')
+            while (!operators.isEmpty() && operators.peek() != '(')
             {
                 postfix += operators.pop();
             }
             operators.pop();
         }
         {
-            while (! operators.isEmpty() && precedence(operators.peek()) >= precedence(infix[i] ))
+            while (!operators.isEmpty() && precedence(operators.peek()) >= precedence(infix[i]) ||
+                precedence(operators.peek()) == precedence(infix[i] && infix[i] != '^'))
             {
                 postfix += operators.pop();
             }
@@ -329,7 +336,7 @@ string infix_to_postfix(string infix)
         }
     }
 
-    while (! operators.isEmpty())
+    while (!operators.isEmpty())
     {
         postfix += operators.pop();
     }
@@ -350,9 +357,10 @@ string infix_to_postfix_v2(string infix)
         if (isdigit(infix[i]))
         {
             postfix += infix[i];
-        } else
+        }
+        else
         {
-            while (precedence(operators.peek()) >= precedence(infix[i] ))
+            while (precedence(operators.peek()) >= precedence(infix[i]))
             {
                 postfix += operators.pop();
             }
@@ -361,6 +369,96 @@ string infix_to_postfix_v2(string infix)
     }
 
     return postfix;
+}
+
+double operation(double a, double b, char op)
+{
+    if (op == '*')
+    {
+        return a * b;
+    }
+    if (op == '/')
+    {
+        return a / b;
+    }
+    if (op == '+')
+    {
+        return a + b;
+    }
+    if (op == '-')
+    {
+        return a - b;
+    }
+    if (op == '^')
+    {
+        return pow(a, b);
+    }
+}
+
+double evaluate_postfix(string postfix)
+{
+    int size = postfix.size();
+    Stack numbers(size);
+
+    for (int i = 0; i < size; ++i)
+    {
+        if (isdigit(postfix[i]))
+        {
+            numbers.push(postfix[i] - '0');
+        }
+        else
+        {
+            double a = numbers.pop();
+            double b = numbers.pop();
+            numbers.push(operation(b, a, postfix[i]));
+        }
+    }
+    return numbers.pop();
+}
+
+char sign(char a, char b)
+{
+    if (a == b)
+    {
+        return '+';
+    }
+    return '-';
+}
+
+string remove_bracket(string str)
+{
+    Stack stk(str.size());
+    stk.push('+');
+    string res = "";
+
+    for (int i = 0; i < (int)str.size(); ++i)
+    {
+        char c = str[i];
+        if (isdigit(c))
+        {
+            res += c;
+        }
+        else if (c == '+' || c == '-')
+        {
+            res += sign(stk.peek(), c);
+        }
+        else if (c == '(' && i)
+        {
+            if (str[i - 1] != '(')
+            {
+                stk.push(sign(stk.peek(), str[i - 1]));
+            }
+            else
+            {
+                stk.push(stk.peek());
+            }
+        }
+        else
+        {
+            stk.pop();
+        }
+    }
+    return res;
 }
 
 
