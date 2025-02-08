@@ -34,6 +34,32 @@ public:
 		added_elements++;
 	}
 
+	void enqueue_front(int value) {
+		assert(!isFull());
+		front = prev(front);
+		array[front] = value;
+		++added_elements;
+	}
+
+	int dequeue_rear()
+	{
+		assert(!isEmpty());
+		rear = prev(rear);
+		int value = array[rear];
+		--added_elements;
+		return value;
+	}
+
+	int prev(int pos) {
+		// pos = (pos - 1 + size) % size;
+		--pos;
+		if (pos == -1) {
+			pos = size - 1;
+		}
+		return pos;
+	}
+
+
 	int dequeue() {
 		assert(!isEmpty());
 		int value = array[front];
