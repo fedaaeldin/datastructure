@@ -120,6 +120,26 @@ public:
             }
         }
     }
+
+    bool is_prefect(int h = -1)
+    {
+        if (h == -1)
+        {
+            h = tree_height();
+        }
+
+        if (!left && !right)
+        {
+            return h == 0; //if leaf
+        }
+
+        if (!left && right || left && !right)
+        {
+            return false; // one child only
+        }
+
+        return left->is_prefect(h - 1) && right->is_prefect(h - 1);
+    }
 };
 
 int main()
