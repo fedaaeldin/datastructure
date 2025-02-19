@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -139,6 +140,13 @@ public:
         }
 
         return left->is_prefect(h - 1) && right->is_prefect(h - 1);
+    }
+
+    bool is_prefect_using_formula()
+    {
+        int h = tree_height();
+        int n = count();
+        return pow(2, h  + 1) - 1 == n;
     }
 };
 
